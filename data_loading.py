@@ -4,7 +4,7 @@ import torchvision.transforms as transforms
 
 # CONSTANTS
 DATA_PATH = "./data"
-BATCH_SIZE = 4
+BATCH_SIZE = 64
 
 def getDataLoaders():
     transform = transforms.Compose(
