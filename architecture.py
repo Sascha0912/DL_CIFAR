@@ -39,7 +39,7 @@ class ExampleCNN(nn.Module):
 class KaggleCNN(nn.Module):
     def __init__(self):
         super(KaggleCNN, self).__init__()
-        self.net = nn.Sequential(
+        self.features = nn.Sequential(
             Reshape(),
             nn.Conv2d(in_channels=3, out_channels=6, kernel_size=5),
             nn.ReLU(),
@@ -56,18 +56,57 @@ class KaggleCNN(nn.Module):
     def forward(self, x):
         return self.net(x)
 
+class AlexNet(nn.Module):
+    def __init__(self):
+        super(AlexNet, self).__init__()
+        self.features = nn.Sequential(
+            Reshape(),
+            nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=2),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2),
+            nn.Conv2d(64, 192, kernel_size=3, padding=2),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2),
+            nn.Conv2d(192, 384, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(384, 256, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(256, 256, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=3, stride=2)
+        )
+
+        self.linear = nn.Sequential(
+            nn.Dropout(0.6),
+            nn.Linear(4096, 2048),
+            nn.ReLU(inplace=True),
+            nn.Dropout(0.6),
+            nn.Linear(2048, 2048),
+            nn.ReLU(inplace=True),
+            nn.Linear(2048, 10),
+        )
+
+    def forward(self, x):
+        features = self.features(x)
+        flatten = features.view(features.size(0), -1)
+        lin = self.linear(flatten)
+        return lin
+
 # TESTING - to verify network logic #
+#'''
 '''
-cnn = KaggleCNN()
+cnn = AlexNet()
 trainLoader, testLoader = getDataLoaders()
 
 trainIter = iter(trainLoader)
 images, labels = trainIter.next()
 
 print(images[0].shape)
+print(cnn)
 
 X = torch.randn(size=(1, 3, 32, 32), dtype=torch.float32)
 for layer in cnn.net:
     X = layer(X)
     print(layer.__class__.__name__,'output shape: \t',X.shape)
 '''
+#'''

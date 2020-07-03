@@ -1,11 +1,11 @@
 from d2l import torch as d2l
 import torch
 from torch import nn
-from architecture import KaggleCNN
+from architecture import AlexNet
 from data_loading import getDataLoaders
 
 # CONSTANTS
-lr, num_epochs = 0.001, 10
+lr, num_epochs = 0.01, 10
 momentum = 0.9
 
 def train(net, train_iter, test_iter, num_epochs, lr,
@@ -48,6 +48,6 @@ def train(net, train_iter, test_iter, num_epochs, lr,
         metric[2]*num_epochs/timer.sum(), device))
 
 # TESTING
-net = KaggleCNN()
+net = AlexNet()
 trainLoader, testLoader = getDataLoaders()
 train(net, trainLoader, testLoader, num_epochs, lr)
