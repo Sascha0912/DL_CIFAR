@@ -3,10 +3,12 @@ import torch
 from torch import nn
 from architecture import AlexNet
 from data_loading import getDataLoaders
+from test import evaluate_accuracy_gpu
 
 # CONSTANTS
 lr, num_epochs = 0.01, 10
 momentum = 0.9
+model_path = 'models/model.pth'
 
 def train(net, train_iter, test_iter, num_epochs, lr,
               device=d2l.try_gpu()):
@@ -51,3 +53,4 @@ def train(net, train_iter, test_iter, num_epochs, lr,
 net = AlexNet()
 trainLoader, testLoader = getDataLoaders()
 train(net, trainLoader, testLoader, num_epochs, lr)
+torch.save(net.state_dict(), model_path)

@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 from data_loading import getDataLoaders
+from util import imshow
 
 class Reshape(nn.Module):
     def forward(self, x):
@@ -29,11 +30,8 @@ class ExampleCNN(nn.Module):
 
     def forward(self, x):
         features = self.net(x)
-        print(features)
         flatten  = self.avgPooling(features).view(features.size(0), -1)
-        print(flatten)
         output   = self.classifier(flatten)
-        print(output)
         return output, features
 
 class KaggleCNN(nn.Module):
@@ -93,20 +91,12 @@ class AlexNet(nn.Module):
         return lin
 
 # TESTING - to verify network logic #
-#'''
 '''
 cnn = AlexNet()
 trainLoader, testLoader = getDataLoaders()
 
-trainIter = iter(trainLoader)
-images, labels = trainIter.next()
+testIter = iter(testLoader)
+images, labels = testIter.next()
 
-print(images[0].shape)
-print(cnn)
-
-X = torch.randn(size=(1, 3, 32, 32), dtype=torch.float32)
-for layer in cnn.net:
-    X = layer(X)
-    print(layer.__class__.__name__,'output shape: \t',X.shape)
+imshow(images[0])
 '''
-#'''
