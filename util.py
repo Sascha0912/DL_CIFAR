@@ -2,7 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from d2l import torch as d2l
 
-classes = ('airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship',' truck')
+def getClasses():
+    classes = ('airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship',' truck')
+    return classes
 
 def imshow(image):
     np_image = np.transpose(image.numpy(), (1,2,0))

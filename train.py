@@ -1,56 +1,73 @@
-from d2l import torch as d2l
 import torch
 from torch import nn
-from architecture import AlexNet
-from data_loading import getDataLoaders
-from test import evaluate_accuracy_gpu
+from torchvision import models
+from config import getLearningRate
+from architecture import Net
+from data_loading import getDataLoader
 
-# CONSTANTS
-lr, num_epochs = 0.01, 10
-momentum = 0.9
-model_path = 'models/model.pth'
+# Getting CUDA information
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print('Using device:', device)
+print()
+if device.type == 'cuda':
+    print(torch.cuda.get_device_name(0))
 
-def train(net, train_iter, test_iter, num_epochs, lr,
-              device=d2l.try_gpu()):
-    """Train and evaluate a model with CPU or GPU."""
-    def init_weights(m):
-        if type(m) == nn.Linear or type(m) == nn.Conv2d:
-            torch.nn.init.xavier_uniform_(m.weight) #Part 2.2
-    net.apply(init_weights)
-    print('training on', device)
-    net.to(device)
-    optimizer = torch.optim.SGD(net.parameters(), lr=lr, momentum=momentum)
-    loss = nn.CrossEntropyLoss()
-    animator = d2l.Animator(xlabel='epoch', xlim=[0, num_epochs],
-                            legend=['train loss', 'train acc', 'test acc'])
-    timer = d2l.Timer()
+# Get pretrained network and remove last layer
+net = models.vgg16(pretrained=True)
+mod = nn.Sequential(*list(net.children())[:-1])
+
+# Add custom Net class to model
+model=nn.Sequential(mod,Net())
+print("Model structure initialized.")
+
+def getModel():
+    return model
+def getMod():
+    return mod
+
+trainable_parameters = []
+for name, p in model.named_parameters():
+    if "fc" in name:
+        trainable_parameters.append(p)
+
+optimizer = torch.optim.SGD(params=trainable_parameters, lr=getLearningRate(), momentum=1e-5)
+criterion = nn.CrossEntropyLoss()
+
+train_loader = getDataLoader()
+total_step = len(train_loader)
+loss_list = []
+acc_list = []
+
+def train(model_name, use_gpu=False):
+    if (use_gpu):
+        model.to(device)
+    min_loss=9999
     for epoch in range(num_epochs):
-        metric = d2l.Accumulator(3)  # train_loss, train_acc, num_examples
-        for i, (X, y) in enumerate(train_iter):
-            timer.start()
-            net.train()
-            optimizer.zero_grad()
-            X, y = X.to(device), y.to(device)
-            y_hat = net(X)
-            l = loss(y_hat, y)
-            l.backward()
-            optimizer.step()
-            with torch.no_grad():
-                metric.add(l*X.shape[0], d2l.accuracy(y_hat, y), X.shape[0])
-            timer.stop()
-            train_loss, train_acc = metric[0]/metric[2], metric[1]/metric[2]
-            if (i+1) % 50 == 0:
-                animator.add(epoch + i/len(train_iter),
-                             (train_loss, train_acc, None))
-        test_acc = evaluate_accuracy_gpu(net, test_iter)
-        animator.add(epoch+1, (None, None, test_acc))
-    print('loss %.3f, train acc %.3f, test acc %.3f' % (
-        train_loss, train_acc, test_acc))
-    print('%.1f examples/sec on %s' % (
-        metric[2]*num_epochs/timer.sum(), device))
+        for i, (images, labels) in enumerate(train_loader):
+            if (use_gpu):
+                images, labels = images.to(device), labels.to(device)
 
-# TESTING
-net = AlexNet()
-trainLoader, testLoader = getDataLoaders()
-train(net, trainLoader, testLoader, num_epochs, lr)
-torch.save(net.state_dict(), model_path)
+            outputs = model(images)
+
+            loss = criterion(outputs, labels)
+            loss_list.append(loss.item())
+
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+            total = labels.size(0)
+            _, predicted = torch.max(outputs.data, 1)
+            correct = (predicted == labels).sum().item()
+            acc_list.append(correct / total)
+
+            if (i % 100) == 0:
+                print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}, Accuracy: {:.2f}%'
+                      .format(epoch + 1, num_epochs, i + 1, total_step, loss.item(),
+                              (correct / total) * 100))
+
+        with open('loss.txt', 'w+') as f:
+            f.write("%s\n" % loss)
+        if loss < min_loss:
+            min_loss = loss
+            torch.save(model.state_dict(), model_name)
