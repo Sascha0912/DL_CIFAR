@@ -8,6 +8,7 @@ import torch.nn.functional as F
 import cv2
 from torchvision.utils import save_image
 from util import getClasses
+import argparse
 
 def returnCAM(feature_conv, weight_softmax, class_idx):
     size_upsample = (256, 256)
@@ -40,7 +41,7 @@ class UnNormalize(object):
             # The normalize code -> t.sub_(m).div_(s)
         return tensor
 
-def visualizeExample(model_path, output_name):
+def visualizeExample(model_path='models/training4.pth', output_name='img1'):
     # UnNormalize function to restore original image
     unorm = UnNormalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
     model = getModel()
@@ -87,3 +88,20 @@ def visualizeExample(model_path, output_name):
     result = heatmap * 0.5 + img * 0.5
     saveImg = output_name+'_cam.png'
     cv2.imwrite(saveImg, result)
+
+# MAIN part: parsing arguments and call visualization function
+parser = argparse.ArgumentParser()
+parser.add_argument('-modelpath', action='store', dest='model_path',
+                    help='Path of the trained model')
+parser.add_argument('-output', action='store', dest='output_name',
+                    help='Name of the output image')
+results = parser.parse_args()
+
+if (results.model_path and results.output_name):
+    visualizeExample(results.model_path, results.output_name)
+elif (results.model_path):
+    visualizeExample(model_path=results.model_path)
+elif (results.output_name):
+    visualizeExample(output_name=results.output_name)
+else:
+    visualizeExample()

@@ -26,12 +26,16 @@ On the left side we can find the original image as found in the dataset upscaled
 |<code>test.py</code>|This file contains model evaluations functions AND all functionality regarding Class Activation mapping|
 
 ## Usage
+### CAM visualization
 - Currently to get a random image plus its CAM execute the following command:
 ```python
-python -c "import test; test.visualizeExample('models/training4.pth','img1')"
+python test.py [-h] [-modelpath MODEL_PATH] [-output OUTPUT_NAME]
 ```
-- work in progress
+
+### Model Training
+- work in Progress
 
 ## Sources
 - http://cnnlocalization.csail.mit.edu/
 - https://medium.com/intelligentmachines/implementation-of-class-activation-map-cam-with-pytorch-c32f7e414923
+- Main paper: http://cnnlocalization.csail.mit.edu/Zhou_Learning_Deep_Features_CVPR_2016_paper.pdf
