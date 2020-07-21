@@ -29,8 +29,10 @@ On the left side we can find the original image as found in the dataset upscaled
 ### CAM visualization
 - Currently to get a random image plus its CAM execute the following command:
 ```python
-python test.py [-h] [-modelpath MODEL_PATH] [-output OUTPUT_NAME]
+python test.py [-h] model output
 ```
+model = {vgg16, alexnet}  
+output = output file name
 
 ### Model Training
 - work in Progress

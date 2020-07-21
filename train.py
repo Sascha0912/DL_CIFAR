@@ -2,7 +2,7 @@ import torch
 from torch import nn
 from torchvision import models
 from config import getLearningRate
-from architecture import Net
+from architecture import Net, Net2
 from data_loading import getDataLoader
 
 # Getting CUDA information
@@ -18,12 +18,21 @@ mod = nn.Sequential(*list(net.children())[:-1])
 
 # Add custom Net class to model
 model=nn.Sequential(mod,Net())
-print("Model structure initialized.")
+
+alexnet = models.alexnet(pretrained=True)
+mod_alex = nn.Sequential(*list(alexnet.children())[:-1])
+
+alexnet_model = nn.Sequential(mod_alex,Net2())
 
 def getModel():
     return model
 def getMod():
     return mod
+
+def getAlexnetModel():
+    return alexnet_model
+def getModAlex():
+    return mod_alex
 
 trainable_parameters = []
 for name, p in model.named_parameters():

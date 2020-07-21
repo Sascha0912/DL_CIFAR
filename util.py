@@ -6,6 +6,10 @@ def getClasses():
     classes = ('airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship',' truck')
     return classes
 
+def getAlexNetClasses():
+    classes = ('Airplane', 'Car', 'Bird', 'Cat', 'Deer', 'Dog', 'Frog', 'Horse', 'Ship', 'Truck')
+    return classes
+
 def imshow(image):
     np_image = np.transpose(image.numpy(), (1,2,0))
     plt.figure(figsize=(2,2))
