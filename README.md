@@ -31,7 +31,7 @@ On the left side we can find the original image as found in the dataset upscaled
 ```python
 python test.py [-h] model output
 ```
-model = {vgg16, alexnet}  
+model = {vgg19, alexnet}  
 output = output file name
 
 ### Model Training
