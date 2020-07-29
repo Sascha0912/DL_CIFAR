@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from d2l import torch as d2l
 
 def getClasses():
     classes = ('airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship',' truck')

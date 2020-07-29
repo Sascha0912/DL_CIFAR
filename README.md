@@ -3,7 +3,20 @@
 Project for the Lecture "Deep Learning" held at Hasso-Plattner-Institute that is about applying the concept of Class Activation Mapping to the [CIFAR10 dataset](https://www.cs.toronto.edu/~kriz/cifar.html) which contains 60,000 32x32 images of 10 different categories.
 
 ## Preview
-On the left side we can find the original image as found in the dataset upscaled. On the right side we can find the corresponding image that has class activation mapping applied to it. The images shown here are chosen randomly to demonstrate the working of CAM.
+In the following preview an overview of the influence of centercropping the input images before training is given as well as a first grasp of the impact of using pretrained models on the quality of the Class Activation Maps.
+### Centercropping
+|Original Image|Alexnet (no Centercropping)|Alexnet (Centercropping)|VGG19 (no Centercropping)|VGG19 (Centercropping)|
+|-|-|-|-|-|
+|![Dog Image](/images/Centercropping/dog.png)|![](/images/Centercropping/Alexnet_noCenterCrop_cam.png)|![](/images/Centercropping/Alexnet_CenterCrop_cam.png)|![](/images/Centercropping/VGG19_noCenterCrop_cam.png)|![](/images/Centercropping/VGG19_CenterCrop_cam.png)|
+|![Car Image](/images/Centercropping/car.png)|![](/images/Centercropping/Alexnet_noCenterCrop_cam1.png)|![](/images/Centercropping/Alexnet_CenterCrop_cam1.png)|![](/images/Centercropping/VGG19_noCenterCrop_cam1.png)|![](/images/Centercropping/VGG19_CenterCrop_cam1.png)|
+
+### Pretraining
+|Original Image|Alexnet (not pretrained)|Alexnet (pretrained)|VGG19 (not pretrained)|VGG19 (pretrained)|
+|-|-|-|-|-|
+|![Car Image](/images/Pretraining/car.png)|![](/images/Pretraining/Alexnet_notPretrained_cam.png)|![](/images/Pretraining/Alexnet_Pretrained_cam.png)|![](/images/Pretraining/VGG19_notPretrained_cam.png)|![](/images/Pretraining/VGG19_Pretrained_cam.png)|
+|![Horse Image](/images/Pretraining/horse.png)|![](/images/Pretraining/Alexnet_notPretrained_cam1.png)|![](/images/Pretraining/Alexnet_Pretrained_cam1.png)|![](/images/Pretraining/VGG19_notPretrained_cam1.png)|![](/images/Pretraining/VGG19_Pretrained_cam1.png)|
+
+<!---
 ### Truck
 ![Truck Image](/images/truck.png)
 ![Truck CAM](/images/truck_cam.png)  
@@ -13,7 +26,7 @@ On the left side we can find the original image as found in the dataset upscaled
 ### Deer
 ![Deer Image](/images/deer.png)
 ![Deer CAM](/images/deer_cam.png)
-
+-->
 ## File Structure
 
 |File|Content|
