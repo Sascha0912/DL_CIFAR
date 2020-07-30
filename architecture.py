@@ -18,18 +18,11 @@ class Vgg19(nn.Module):
         # Single Classifier Layer for CAM
         self.classifier = nn.Linear(512,10)
 
-        # placeholder for the gradients
-        self.gradients = None
-
         if(freeze):
           for i, param in enumerate(self.features.parameters()):
             param.requires_grad = False
             if(i+1 >= freeze):
               break
-
-    # hook for the gradients of the activations
-    def activations_hook(self, grad):
-        self.gradients = grad
 
     def forward(self, x):
         x = self.features(x)
@@ -40,14 +33,6 @@ class Vgg19(nn.Module):
         x = x.mean(2)
         x = self.classifier(x)
         return x
-
-    # method for the gradient extraction
-    def get_activations_gradient(self):
-        return self.gradients
-
-    # method for the activation exctraction
-    def get_activations(self, x):
-        return self.features(x)
 
 class Alexnet(nn.Module):
     def __init__(self, pretrained = False, freeze = None):
@@ -65,24 +50,14 @@ class Alexnet(nn.Module):
         # Single Classifier Layer for CAM
         self.classifier = nn.Linear(256, 10)
 
-        # placeholder for the gradients
-        self.gradients = None
-
         if(freeze):
           for i, param in enumerate(self.features.parameters()):
             param.requires_grad = False
             if(i+1 >= freeze):
               break
 
-
-    # hook for the gradients of the activations
-    def activations_hook(self, grad):
-        self.gradients = grad
-
     def forward(self, x):
         x = self.features(x)
-        # register the hook     (Only GRAD_CAM ?!)
-        # h = x.register_hook(self.activations_hook)
 
         # apply the remaining pooling
         x = self.avg_pool(x)
@@ -91,11 +66,3 @@ class Alexnet(nn.Module):
         x = x.mean(2)
         x = self.classifier(x)
         return x
-
-    # method for the gradient extraction
-    def get_activations_gradient(self):
-        return self.gradients
-
-    # method for the activation exctraction
-    def get_activations(self, x):
-        return self.features(x)
